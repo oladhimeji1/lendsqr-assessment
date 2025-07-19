@@ -59,7 +59,7 @@ Demo Wallet is a simple MVP backend service built with **Node.js**, **TypeScript
 
 ```bash
 git clone https://github.com/oladhimeji1/lendsqr-assessment.git
-cd demo-wallet
+cd lendsqr-assessment
 npm install
 ```
 
@@ -95,7 +95,7 @@ npm run migrate
 ### 4. Start Server
 
 ```bash
-npm run dev
+npm run start
 ```
 
 ### 5. Access API Docs
@@ -119,7 +119,7 @@ Visit: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
 
 > Use [DBDesigner](https://app.dbdesigner.net/) to generate and link your ER diagram here.
 
-![ER Diagram](https://link-to-diagram.png)
+![ER Diagram](https://dbdesigner.page.link/HBfJfirDjLXSCkr38)
 
 ---
 

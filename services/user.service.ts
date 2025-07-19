@@ -75,7 +75,6 @@ async function createUserService(data: CreateUserData): Promise<User> {
       type: "default",
       currency: "NGN",
       account_balance: 0,
-      balance_last_updated: new Date(),
       is_primary: true,
       pending_transaction: 0,
       created_on: new Date(),

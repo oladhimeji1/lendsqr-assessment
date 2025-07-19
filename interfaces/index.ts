@@ -49,7 +49,6 @@ export interface Wallet {
   type: string;
   currency: string;
   account_balance: number;
-  balance_last_updated: string;
   is_primary: boolean;
   pending_transaction: number;
   created_on: string;
