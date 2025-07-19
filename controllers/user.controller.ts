@@ -17,7 +17,7 @@ const createUser = async function( req: Request<{}, {}, CreateUserData>, res: Re
     photo_url,
     documents } = req.body;
 
-  if (!email || !phone_number || !bvn) {
+  if (!email || !phone_number || !name) {
     return res.status(400).json({ message: "Name, email, and phone are required." });
   }
 

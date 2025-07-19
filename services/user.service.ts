@@ -53,19 +53,19 @@ async function createUserService(data: CreateUserData): Promise<User> {
     const newUser: User = await trx("users").where({ id: userId }).first();
 
     // ✅ Insert KYC documents
-    const docsToInsert = documents.map((doc) => ({
+    const docsToInsert = documents?.map((doc) => ({
       user_id: newUser.id,
       url: doc.url,
       type_id: doc.type_id,
       sub_type_id: doc.sub_type_id
     }));
 
-    if (docsToInsert.length > 0) {
+    if (docsToInsert && docsToInsert.length > 0) {
       await trx("documents").insert(docsToInsert);
     }
 
     // ✅ Create wallet
-    await trx("wallets").insert({
+    const [user_id] = await trx("wallets").insert({
       user_id: newUser.id,
       org_id: 2198,
       savings_id: Math.floor(Math.random() * 1e6).toString(),
@@ -82,7 +82,10 @@ async function createUserService(data: CreateUserData): Promise<User> {
       deleted_flag: false
     });
 
-    return newUser;
+    
+    const wallet = await trx("wallets").where({ id: user_id }).first();
+
+    return {newUser, account_no: wallet.account_no};
   });
 }
 
