@@ -11,7 +11,7 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: "http://localhost:8080/api",
+        url: "https://oladimeji-abdulrazaq-lendsqr-be-test.onrender.com:8080/api",
       },
     ],
     components: {
