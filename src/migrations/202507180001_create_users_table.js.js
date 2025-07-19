@@ -14,7 +14,7 @@ export async function up(knex) {
     table.string("address");
     table.string("photo_url");
 
-    table.timestamps(true, true);
+    table.timestamps(true);
   });
 }
 

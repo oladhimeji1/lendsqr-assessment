@@ -5,7 +5,7 @@ exports.up = function(knex) {
     table.string("url");
     table.integer("type_id");
     table.integer("sub_type_id");
-    table.timestamps(true, true);
+    table.timestamps(true);
   });
 };
 

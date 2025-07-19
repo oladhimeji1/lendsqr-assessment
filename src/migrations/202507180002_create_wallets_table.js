@@ -13,15 +13,13 @@ exports.up = function (knex) {
     table.string("type").defaultTo("default");
     table.string("currency").defaultTo("NGN");
     table.decimal("account_balance", 14, 2).defaultTo(0.0);
-    table.timestamp("balance_last_updated").defaultTo(knex.fn.now());
+    // table.timestamp("balance_last_updated").defaultTo(knex.fn.now());
     table.boolean("is_primary").defaultTo(true);
     table.decimal("pending_transaction", 14, 2).defaultTo(0.0);
     table.timestamp("created_on").defaultTo(knex.fn.now());
     table.bigInteger("created_by").nullable();
-    table.timestamp("modified_on").nullable();
     table.bigInteger("modified_by").nullable();
     table.boolean("deleted_flag").defaultTo(false);
-    table.timestamp("deleted_on").nullable();
     table.bigInteger("deleted_by").nullable();
   });
 };

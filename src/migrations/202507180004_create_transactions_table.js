@@ -8,7 +8,7 @@ export async function up(knex) {
     table.string("sender_account").nullable();
     table.string("receiver_account").nullable();
     table.string("reference").unique().notNullable();
-    table.timestamps(true, true);
+    table.timestamps(true);
   });
 };
 
