@@ -24,15 +24,16 @@ import { generateRef } from "../utils/generateRef";
 //  * @returns Updated wallet
 //  */
 
-async function fundWalletService(userId: number, amount: number): Promise<Wallet> {
+async function fundWalletService(userId: number, amount: number, receiverAccount: string): Promise<Wallet> {
   if (amount <= 0) {
     throw new Error("Amount must be greater than 0");
   }
 
   return await db.transaction(async (trx: any) => {
     let wallet: Wallet | undefined = await trx("wallets").where({ user_id: userId }).first();
+    let receiverWallet: Wallet | undefined = await trx("wallets").where({ account_no: receiverAccount }).first();
 
-    if (!wallet) {
+    if (!wallet || !receiverWallet) {
       throw new Error("Wallet not found");
     }
 
@@ -44,6 +45,7 @@ async function fundWalletService(userId: number, amount: number): Promise<Wallet
       type: "fund",
       amount,
       receiver_id: userId,
+      receiver_account: receiverAccount,
       reference: generateRef(),
     });
     wallet = {
@@ -77,6 +79,10 @@ receiverId: number
 
       if (!senderWallet || !receiverWallet) {
         throw new Error("Sender or receiver wallet not found");
+      }
+
+      if(senderId === receiverId || senderAccount === receiverAccount) {
+        throw new Error("You cannot transfer to the same account");
       }
 
       if (parseFloat(senderWallet.account_balance) < amount) {
@@ -122,9 +128,10 @@ async function withdrawWalletService(userId: number, amount: number, senderAccou
   }
 
   return await db.transaction(async (trx: any) => {
+    let user: Wallet | undefined = await trx("wallets").where({ user_id: userId }).first();
     let wallet: Wallet = await trx("wallets").where({ account_no: senderAccount }).first();
 
-    if (!wallet) {
+    if (!wallet || !user) {
       throw new Error("Wallet not found");
     }
 

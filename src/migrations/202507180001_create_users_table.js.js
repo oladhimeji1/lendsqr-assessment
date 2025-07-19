@@ -3,16 +3,16 @@ export async function up(knex) {
     table.increments("id").primary();
     table.string("email").notNullable().unique();
     table.string("phone").notNullable().unique();
-    table.string("bvn").notNullable();
-    table.string("bvn_phone_number").notNullable();
-    table.date("dob").notNullable();
+    table.string("bvn");
+    table.string("bvn_phone_number"); 
+    table.date("dob");
     table.string("name").notNullable();
-    table.string("bank_code").notNullable();
-    table.string("state").notNullable();
-    table.string("lga").notNullable();
-    table.string("city").notNullable();
-    table.string("address").notNullable();
-    table.string("photo_url").notNullable();
+    table.string("bank_code");
+    table.string("state");
+    table.string("lga");
+    table.string("city");
+    table.string("address");
+    table.string("photo_url");
 
     table.timestamps(true, true);
   });

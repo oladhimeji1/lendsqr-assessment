@@ -5,8 +5,8 @@ export async function up(knex) {
     table.decimal("amount", 14, 2).notNullable();
     table.integer("sender_id").unsigned().nullable();
     table.integer("receiver_id").unsigned().nullable();
-    table.integer("sender_ccount").unsigned().nullable();
-    table.integer("receiver_ccount").unsigned().nullable();
+    table.string("sender_account").nullable();
+    table.string("receiver_account").nullable();
     table.string("reference").unique().notNullable();
     table.timestamps(true, true);
   });

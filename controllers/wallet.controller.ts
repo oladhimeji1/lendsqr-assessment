@@ -4,9 +4,14 @@ import  { fundWalletService, withdrawWalletService, transferWalletService } from
 async function fundWalletController(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId);
-    const { amount } = req.body;
+    const { amount, receiverAccount } = req.body;
 
-    const wallet = await fundWalletService(userId, amount);
+    if (isNaN(userId) || !amount || amount <= 0 || !receiverAccount) {
+      return res.status(400).json({ error: "Invalid input or some fields are missing" });
+    }
+
+    const wallet = await fundWalletService(userId, amount, receiverAccount);
+
     res.status(200).json({ message: 'Wallet funded successfully', wallet });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
