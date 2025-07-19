@@ -1,11 +1,11 @@
-const axios = require("axios");
+import axios from "axios";
 require("dotenv").config();
 
 import type { KarmaApiResponse } from "../interfaces/index";
 
-async function isBlacklisted(bvn: string): Promise<boolean> {
+async function isBlacklisted(phone: string): Promise<boolean> {
     try {
-        const response = await axios.get(`https://api.adjutor.lendsqr.com/karma/check/${bvn}`, {
+        const response = await axios.get(`https://api.adjutor.lendsqr.com/karma/check/${phone}`, {
             headers: {
                 Authorization: `Bearer ${process.env.KARMA_API_KEY}`,
             },
@@ -18,4 +18,4 @@ async function isBlacklisted(bvn: string): Promise<boolean> {
     }
 }
 
-module.exports = { isBlacklisted };
+export default isBlacklisted;
