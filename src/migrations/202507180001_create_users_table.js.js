@@ -6,7 +6,7 @@ export async function up(knex) {
     table.string("bvn").notNullable();
     table.string("bvn_phone_number").notNullable();
     table.date("dob").notNullable();
-    table.string("account_number").notNullable();
+    table.string("name").notNullable();
     table.string("bank_code").notNullable();
     table.string("state").notNullable();
     table.string("lga").notNullable();

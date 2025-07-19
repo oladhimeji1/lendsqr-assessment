@@ -3,9 +3,9 @@ require("dotenv").config();
 
 import type { KarmaApiResponse } from "../interfaces/index";
 
-async function isBlacklisted(phone: string): Promise<boolean> {
+async function isBlacklisted(email: string): Promise<boolean> {
     try {
-        const response = await axios.get(`https://api.adjutor.lendsqr.com/karma/check/${phone}`, {
+        const response = await axios.get(`https://adjutor.lendsqr.com/v2/verification/karma/${email}`, {
             headers: {
                 Authorization: `Bearer ${process.env.KARMA_API_KEY}`,
             },

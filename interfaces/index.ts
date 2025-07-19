@@ -10,11 +10,11 @@ export interface KycDocument {
 
 export interface CreateUserData {
   phone_number: string;
+  name: string;
   bvn: string;
   bvn_phone_number: string;
   dob: string;
   email: string;
-  account_number: string;
   bank_code: string;
   state: string;
   lga: string;

@@ -30,7 +30,7 @@ async function fundWalletService(userId: number, amount: number): Promise<Wallet
   }
 
   return await db.transaction(async (trx: any) => {
-    const wallet: Wallet | undefined = await trx("wallets").where({ user_id: userId }).first();
+    let wallet: Wallet | undefined = await trx("wallets").where({ user_id: userId }).first();
 
     if (!wallet) {
       throw new Error("Wallet not found");
@@ -38,7 +38,7 @@ async function fundWalletService(userId: number, amount: number): Promise<Wallet
 
     const newBalance = parseFloat(wallet.account_balance.toString()) + amount;
 
-    await trx("wallets").where({ user_id: userId }).update({ balance: newBalance });
+    await trx("wallets").where({ user_id: userId }).update({ account_balance: newBalance });
 
     await trx("transactions").insert({
       type: "fund",
@@ -46,65 +46,83 @@ async function fundWalletService(userId: number, amount: number): Promise<Wallet
       receiver_id: userId,
       reference: generateRef(),
     });
+    wallet = {
+      ...wallet,
+      account_balance: newBalance,
+    }
 
     return {
       ...wallet,
-      balance: newBalance,
+      amount: amount,
     };
   });
 }
 
 async function transferWalletService(
+  senderAccount: number,
+  receiverAccount: number,
+  amount: number,
   senderId: number,
-  receiverId: number,
-  amount: number
+receiverId: number
 ): Promise<{ message: string; senderBalance: number; receiverBalance: number }> {
   if (amount <= 0) {
     throw new Error("Amount must be greater than 0");
   }
 
+
   return await db.transaction(async (trx: any) => {
-    const senderWallet = await trx("wallets").where({ user_id: senderId }).first();
-    const receiverWallet = await trx("wallets").where({ user_id: receiverId }).first();
+    try {
+      const senderWallet = await trx("wallets").where({ account_no: senderAccount }).first();
+      const receiverWallet = await trx("wallets").where({ account_no: receiverAccount }).first();
 
-    if (!senderWallet || !receiverWallet) {
-      throw new Error("Sender or receiver wallet not found");
+      if (!senderWallet || !receiverWallet) {
+        throw new Error("Sender or receiver wallet not found");
+      }
+
+      if (parseFloat(senderWallet.account_balance) < amount) {
+        throw new Error("Insufficient balance");
+      }
+      
+  // console.log(amount, senderId, receiverId);
+
+      const newSenderBalance = parseFloat(senderWallet.account_balance) - amount;
+      const newReceiverBalance = parseFloat(receiverWallet.account_balance) + amount;
+
+      await trx("wallets").where({ account_no: senderAccount }).update({ account_balance: newSenderBalance });
+      await trx("wallets").where({ account_no: receiverAccount }).update({ account_balance: newReceiverBalance });
+
+      await trx("transactions").insert({
+          type: "transfer",
+          amount,
+          sender_account: senderAccount,
+          receiver_account: receiverAccount,
+          sender_id: senderId,
+          receiver_id: receiverId,
+          reference: generateRef(),
+      });
+
+
+      return {
+        message: "Transfer successful",
+        sender: senderId,
+        receiver: receiverId,
+        amount: amount,
+        // senderBalance: newSenderBalance,
+        balance: newReceiverBalance,
+      };
+    } catch (error: any) {
+      throw new Error(error.message);
     }
-
-    if (parseFloat(senderWallet.balance) < amount) {
-      throw new Error("Insufficient balance");
-    }
-
-    const newSenderBalance = parseFloat(senderWallet.balance) - amount;
-    const newReceiverBalance = parseFloat(receiverWallet.balance) + amount;
-
-    await trx("wallets").where({ user_id: senderId }).update({ balance: newSenderBalance });
-    await trx("wallets").where({ user_id: receiverId }).update({ balance: newReceiverBalance });
-
-    await trx("transactions").insert({
-        type: "transfer",
-        amount,
-        sender_id: senderId,
-        receiver_id: receiverId,
-        reference: generateRef(),
-    });
-
-
-    return {
-      message: "Transfer successful",
-      senderBalance: newSenderBalance,
-      receiverBalance: newReceiverBalance,
-    };
   });
 }
 
-async function withdrawWalletService(userId: number, amount: number): Promise<Wallet> {
+async function withdrawWalletService(userId: number, amount: number, senderAccount: number): Promise<Wallet> {
   if (amount <= 0) {
     throw new Error("Amount must be greater than 0");
   }
 
   return await db.transaction(async (trx: any) => {
-    const wallet: Wallet = await trx("wallets").where({ user_id: userId }).first();
+    let wallet: Wallet = await trx("wallets").where({ account_no: senderAccount }).first();
 
     if (!wallet) {
       throw new Error("Wallet not found");
@@ -116,19 +134,24 @@ async function withdrawWalletService(userId: number, amount: number): Promise<Wa
 
     const newBalance = parseFloat(wallet.account_balance.toString()) - amount;
 
-    await trx("wallets").where({ user_id: userId }).update({ balance: newBalance });
+    await trx("wallets").where({ user_id: userId }).update({ account_balance: newBalance });
 
     await trx("transactions").insert({
         type: "withdraw",
         amount,
         sender_id: userId,
+        sender_account: senderAccount,
         reference: generateRef(),
     });
 
+    wallet = {
+      ...wallet,
+      account_balance: newBalance,
+    }
 
     return {
       ...wallet,
-      balance: newBalance,
+      amount: amount,
     };
   });
 }

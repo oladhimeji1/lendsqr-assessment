@@ -7,9 +7,9 @@ async function createUserService(data: CreateUserData): Promise<User> {
     phone_number,
     bvn,
     bvn_phone_number,
+    name,
     dob,
     email,
-    account_number,
     bank_code,
     state,
     lga,
@@ -20,10 +20,12 @@ async function createUserService(data: CreateUserData): Promise<User> {
   } = data;
 
   // Optional: Uncomment for real usage
-  // const blacklisted = await isBlacklisted(phone_number);
-  // if (blacklisted) {
-  //   throw new Error("User is blacklisted");
-  // }
+  const blacklisted = await isBlacklisted(email);
+  if (blacklisted) {
+    throw new Error("User is blacklisted");
+  } else {
+    console.log("User is not blacklisted");
+  }
 
   const existingUser = await db("users").where({ email }).first();
   if (existingUser) {
@@ -34,11 +36,11 @@ async function createUserService(data: CreateUserData): Promise<User> {
     // ✅ Insert user and get ID
     const [userId] = await trx("users").insert({
       phone: phone_number,
+      name: name,
       bvn,
       bvn_phone_number,
       dob,
       email,
-      account_number,
       bank_code,
       state,
       lga,
@@ -67,7 +69,7 @@ async function createUserService(data: CreateUserData): Promise<User> {
       user_id: newUser.id,
       org_id: 2198,
       savings_id: Math.floor(Math.random() * 1e6).toString(),
-      account_name: `User ${newUser.id}`,
+      account_name: `${newUser.name}`,
       account_no: `3D5B00${Math.floor(Math.random() * 1e10)}`,
       provider: "lendsqr",
       type: "default",

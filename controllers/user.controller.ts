@@ -5,10 +5,10 @@ import { CreateUserData, User } from "../interfaces/index";
 const createUser = async function( req: Request<{}, {}, CreateUserData>, res: Response ) {
   const { phone_number,
     bvn,
+    name,
     bvn_phone_number,
     dob,
     email,
-    account_number,
     bank_code,
     state,
     lga,
@@ -24,10 +24,10 @@ const createUser = async function( req: Request<{}, {}, CreateUserData>, res: Re
   try {
     const user: User = await createUserService({ phone_number,
     bvn,
+    name,
     bvn_phone_number,
     dob,
     email,
-    account_number,
     bank_code,
     state,
     lga,

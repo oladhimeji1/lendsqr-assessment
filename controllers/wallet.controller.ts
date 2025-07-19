@@ -16,13 +16,13 @@ async function fundWalletController(req: Request, res: Response) {
 async function withdrawWalletController(req: any, res: any) {
   try {
     const userId = parseInt(req.params.userId);
-    const { amount } = req.body;
+    const { amount, senderAccount } = req.body;
 
-    if (isNaN(userId) || !amount) {
-      return res.status(400).json({ error: "Invalid input" });
+    if (isNaN(userId) || !amount || amount <= 0 || !senderAccount) {
+      return res.status(400).json({ error: "Invalid input or some fields are missing" });
     }
 
-    const wallet = await withdrawWalletService(userId, amount);
+    const wallet = await withdrawWalletService(userId, amount, senderAccount);
 
     res.status(200).json({
       message: "Withdrawal successful",
@@ -35,13 +35,13 @@ async function withdrawWalletController(req: any, res: any) {
 
 async function transferWalletController(req: any, res: any) {
   try {
-    const { senderId, receiverId, amount } = req.body;
+    const { senderAccount, receiverAccount, amount, senderId, receiverId } = req.body;
 
-    if (!senderId || !receiverId || !amount) {
+    if (!senderAccount || !receiverAccount || !amount || !senderId || !receiverId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const result = await transferWalletService(senderId, receiverId, amount);
+    const result = await transferWalletService(senderAccount, receiverAccount, amount, senderId, receiverId);
 
     res.status(200).json(result);
   } catch (error: any) {
